@@ -6,7 +6,7 @@ import sys
 import argparse
 import datetime
 
-sys.path.insert(1, '/data6/Users/helee/HNDiLeptonWorskspace/python')
+sys.path.insert(1, '/data6/Users/jalmond/2020/HL_SKFlatAnalyzer/HNDiLeptonWorskspace/python')
 from GeneralSetup import *
 
 args = setupargs("MakeCard")
@@ -26,12 +26,6 @@ if config_file == "None":
     print "Need input file to configure job"
     print "python MakeInputLimitCutCount.py -c config.txt"
     exit()
-
-flavourName = ""
-if "SF" in config_file:
-    flavourName = "MuMuEE"
-else:
-    flavourName = "EMu"
 
 _setup=[]
 _channels =  GetConfig("channels",    config_file,_setup)
@@ -56,13 +50,13 @@ MakeDirectory(Outputdir)
 MakeDirectory(RunOutputdir)
 
 # create file of all datacard names used as input to batch jobs       
-outname = "AllCards"
+outname="AllCards"
 for s in SRs:
-       outname += "_"+s
+       outname+="_"+s
 
 niter = NIteration([years, _channels, flavours,SRs])     
-allcards = open(os.getenv("HNDILEPTONWORKSPACE_DIR")+"/"+Outdir+"/run/"+outname+"_"+flavourName+".txt","w")
-cardlist = []
+allcards= open(os.getenv("HNDILEPTONWORKSPACE_DIR")+"/"+Outdir+"/run/"+outname+".txt","w")
+cardlist=[]
 for _iter in range(0,niter):
 
        GetIter  = SumIteration(_iter, [years, _channels, flavours,SRs])
@@ -73,35 +67,30 @@ for _iter in range(0,niter):
 
        print year + " " + _channel + " " + flavour + " " + SR
 
-       isVBF = ChooseTag(_channel)
        IDs     = ChooseID(IDMu, IDEl, flavour, 1)
        _masses = ChooseMassList(masses_s, masses_t,masses_c, _channel, 1)
 
-       file_output = Outputdir + "/" + year + "/"
+       file_output = Outputdir + year+"/"
        MakeDirectory(file_output)
-       file_output = file_output + flavour + "_" + SR + "/"
+       file_output = file_output+ flavour + "_" + SR+"/"
        MakeDirectory(file_output)
 
        for _id in IDs:
            for mass in _masses:
                
-               cardname = "card_" + year + "_" + flavour + "_" + SR + "_M" + mass + isVBF + "_" + _id + ".txt"
+               isVBF=ChooseTag(_channel)
+               cardname="card_"+year+"_"+flavour + "_" + SR+"_N" + mass + isVBF+"_"+_id+".txt"
                allcards.write(file_output + cardname+"\n")
-               cardlist.append(file_output + cardname)
-               limitfile = open(file_output + cardname,"w")
+               cardlist.append(file_output+ cardname)
+               limitfile = open(file_output+ cardname,"w")
 
-               nFake   = GetFakeCountSRMass(year, Analyzer, "Central", flavour, SR, mass, _id)
-               nCF     = GetCFCountSRMass(year, Analyzer, "Central", flavour, SR, mass, _id)
-               nVV     = GetVVCountSRMass(year, Analyzer, "Central", flavour, SR, mass, _id)
-               nRare   = GetRareSMCountSRMass(year, Analyzer, "Central", flavour, SR, mass, _id)
-               nPrompt = nVV + nRare
-
-               nSignal = GetSignalCountSRMass(year, Analyzer, isVBF, "Central", flavour, SR, mass, _id)
-
+               nfake = GetFakeCountSRMassBin(flavour,SR, mass,year,_id,Analyzer)
                limitfile.write("imax 1  number of channels\n")
                limitfile.write("jmax 3  number of backgroundss\n")
-               limitfile.write("kmax " + GetNuisances(nFake) + "  number of nuisance parameters (sources of systematical uncertainties)\n")
+               limitfile.write("kmax "+GetNuiscances(nfake)+"  number of nuisance parameters (sources of systematical uncertainties)\n")
                
+               
+                   
                limitfile.write("------------\n")
                limitfile.write("# we have just one channel, in which we observe 0 events\n")
                limitfile.write("bin sr1\n")
@@ -112,13 +101,18 @@ for _iter in range(0,niter):
                limitfile.write("# then we list the independent sources of uncertainties, and give their effect (syst. error)\n")
                limitfile.write("# on each process and bin\n")
                limitfile.write("bin       sr1     sr1     sr1     sr1\n")
-               limitfile.write("process   prompt  fake    cf      HN" + mass + "\n")
+               limitfile.write("process   prompt  fake    cf      HN"+mass+"\n")
                limitfile.write("process   1       2       3       0\n")
                
-               rate_line = "rate  " + str(nPrompt) + " " + str(nFake) + " " + str(nCF) + " " + str(nSignal)
+               nprompt = GetPromptCountSRMassBin(flavour,SR, mass,year,_id,Analyzer)
+               ncf = GetCFCountSRMassBin(flavour,SR,mass,year,_id,Analyzer)
+               nsig = GetSignalEventsSRMassBin(flavour,SR,mass,year,isVBF,_id,Analyzer)
+               
+
+               rate_line = "rate  " + str(nprompt) + " " + str(nfake) + " " + str(ncf) + " " + str(nsig)
                rate_line += "\n"
                limitfile.write(rate_line)
-               WriteTemplate(limitfile, flavour, SR, int(mass), nCF, nFake)
+               WriteTemplate(limitfile, SR, flavour, int(mass), ncf,nfake)
                limitfile.close()
 
 allcards.close()

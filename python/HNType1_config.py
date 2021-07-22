@@ -197,9 +197,13 @@ def GetEXO_17_028_Eff(channel,SR,mass):
 
     return -999.
 
+
 def PrintList(_list):
+
     for x in _list:
         print x
+
+
 def ChooseMassList(list1, list2,list3, channel,order_sc):
 
     if order_sc == 1:
@@ -219,7 +223,7 @@ def ChooseMassList(list1, list2,list3, channel,order_sc):
 
 
 def ChooseTag(channel):
-    
+
     if channel == "Tchannel":
         return "_VBFOnly"
     elif channel == "Combinedchannel":
@@ -227,7 +231,9 @@ def ChooseTag(channel):
     else:
         return "_DY"
         
+
 def ChooseID(list1, list2, flavour,order_mu):
+
     if order_mu == 1:
         if flavour == "MuMu":
             return list1
@@ -241,12 +247,14 @@ def ChooseID(list1, list2, flavour,order_mu):
 
     
 def MakeDirectory(path):
+
     if not os.path.exists(path):
         os.mkdir(path)
 
 
 def NIteration(samples):
-    niter =1
+
+    niter = 1
     for x in samples:
         niter=niter* len(x)
 
@@ -254,6 +262,7 @@ def NIteration(samples):
 
 
 def SumIteration(i, lists):
+
     if len(lists) == 3:
         niter = NIteration(lists)
         return SumIteration3(i, lists[0],lists[1],lists[2],niter)
@@ -266,6 +275,7 @@ def SumIteration(i, lists):
 
     return [0,0,0]
     
+
 def SumIteration3(i, list1, list2, list3,nmax):
 
     iter_1=0
@@ -286,6 +296,7 @@ def SumIteration3(i, list1, list2, list3,nmax):
 
 
     return ["","",""]
+
 
 def SumIteration4(i, list1, list2, list3,list4,nmax):
 
@@ -343,6 +354,7 @@ def SumIteration5(i, list1, list2, list3,list4,list5,nmax):
 
     return ["","","","",""]
 
+
 def PrintSetup(setupconfig):
 
     for x in setupconfig:
@@ -356,6 +368,7 @@ def PrintSetup(setupconfig):
             print "Error in PrintSetup"
             exit()
     
+
 def GetCentralConfig(scriptname, tag, configfile,_setup):
 
     list_channels=[]
@@ -402,6 +415,7 @@ def GetCentralConfig(scriptname, tag, configfile,_setup):
     else:
         print "Error in finding " + tag + "  from " + configfile
         exit()
+
 
 def GetConfig(tag, configfile,_setup):
 
@@ -469,6 +483,7 @@ def GetCentralSConfig(scriptname, tag, configfile,_setup):
         print "Error in finding " + tag + "  from " + configfile
         exit()
 
+
 def GetSConfig(tag, configfile,_setup):
     
     list_channels=[]
@@ -497,8 +512,10 @@ def GetSConfig(tag, configfile,_setup):
                 
     
 def GetHistNameSRHighMass(flavour,SR, mass,year, _id,Analyzer):
+
     histname = SR+"_highmass/"+SR+"_highmass_njets_"+Analyzer+"_"+flavour + "_"+_id + "_"
     return histname
+
 
 def GetHistNameNoCut(flavour,_id,Analyzer):
 
@@ -510,12 +527,39 @@ def GetHistNameNoCut(flavour,_id,Analyzer):
         histname = "FillEventCutflow/"+Analyzer+"_"+flavour+ "_"+_id + "exo_17_028_diel_same_sign";
     return histname
 
+
 def GetHistNameSRMassBin(channel,SR, mass,year, _id,Analyzer):
 
     histname= SR
     histname+= "/"+ str(histname) +"_mn"+mass +"_nevent_"+str(Analyzer)+"_"+str(channel)+"_"+str(_id)+"_"
     return histname
 
+
+def GetHistNameSRMass(systName, flavour, SR, mass, _id):
+
+    if flavour == "MuMu":
+        histname = systName + "/dimu_High" + SR + "_M" + mass + "_Number_Events_" + _id
+    elif flavour == "EE":
+        histname = systName + "/diel_High" + SR + "_M" + mass + "_Number_Events_" + _id
+    else:
+        histname = systName + "/emu_High" + SR + "_M" + mass + "_Number_Events_" + _id
+
+    return histname
+ 
+
+def GetPDName(year, flavour):
+
+    if flavour == "MuMu":
+        PDname = "DoubleMuon"
+    elif flavour == "EE":
+        if year == "2018":
+            PDname = "EGamma"
+        else:
+            PDname = "DoubleEG"
+    else:
+        PDname = "MuonEG"
+
+    return PDname
 
 
 def GetMassBin(mass, VBF):
@@ -561,8 +605,8 @@ def GetMassBin(mass, VBF):
         if m == mass:
             return counter
 
-
     return -1
+
 
 def GetSignalEffSRMassBin(channel,SR, mass,year, VBF,_id,Analyzer):
 
@@ -622,7 +666,6 @@ def GetSignalEventsShape(flavour,SR, mass,year, channel,_id,_var,analyzername):
     return round(total,4)
 
 
-
 def GetCountShape(channel,histname,flavour,SR, mass,year,_id,_var,analyzername):
 
     filepath =  os.getenv("DATACARD_SHAPE_PATH") + "/" + analyzername+"/"+year + "/" + flavour + "_"+ SR + "/HN_"+channel+"_"+ mass + "_highmass_Run2Legacy_v4_"+year + "_"+SR + "_"+ flavour + "_"+_id + "_"+_var+".root"
@@ -635,8 +678,6 @@ def GetCountShape(channel,histname,flavour,SR, mass,year,_id,_var,analyzername):
     _file.Close()
 
     return round(total,4)
-
-
 
 
 def GetSignalEventsSRMassBin(channel,SR, mass,year, VBF,_id,Analyzer):
@@ -678,7 +719,6 @@ def GetSignalEventsSRMassBin(channel,SR, mass,year, VBF,_id,Analyzer):
     else:
         scale_ = 100.
 
-
     #since only 2016 samples available use these and scale to lumi for now                          \
                                                                                                      
     # effective lumi: 36.47 fb-1 (2016) 41.54 fb-1 (2017) 59.96 fb-1 (2018)                         \
@@ -690,14 +730,58 @@ def GetSignalEventsSRMassBin(channel,SR, mass,year, VBF,_id,Analyzer):
 
     return round(total*scale_,4)
 
+
+def GetSignalCountSRMass(year, Analyzer, isVBF, systName, flavour, SR, mass, _id):
+
+    histname  = GetHistNameSRMass(systName, flavour, SR, mass, _id)
+    filepaths = []
+
+    if isVBF == "_DY":
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunSyst__/" + Analyzer + "_DYTypeI_SS_" + flavour + "_M" + mass + ".root")
+    elif isVBF == "_VBFOnly":
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunSyst__/" + Analyzer + "_VBFTypeI_SS_" + flavour + "_M" + mass + ".root")
+    else :
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunSyst__/" + Analyzer + "_DYTypeI_SS_" + flavour + "_M" + mass + ".root")
+        if int(mass) > 450:
+            filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunSyst__/" + Analyzer + "_VBFTypeI_SS_" + flavour + "_M" + mass + ".root") 
+
+    total = 0
+    for f in filepaths:
+        _file = ROOT.TFile(f)
+        if _file:
+            hist = _file.Get(histname)
+            if hist:
+                total += hist.GetBinContent(1)
+        _file.Close()
+
+    if total < 0:
+        return 0.
+
+    ### Since mixing changed from 0.1 to 0.01, multiply 100 to scale values used for EXO-17-028
+
+    scale_ = 1.
+    if int(mass) <= 150:
+        scale_ = 10.
+    elif int(mass) <= 450:
+        scale_ = 100.
+    elif int(mass) <= 850:
+        scale_ = 1000.
+    elif int(mass) <= 1550:
+        scale_ = 10000.
+    else:
+        scale_ = 100000.
+
+    return round(total*scale_, 4)
+
+
 def GetFakeCountSRMassBin(channel, SR, mass,year,_id,Analyzer):
+
     histname=GetHistNameSRMassBin(channel,SR, mass,year,_id,Analyzer)
     filepaths =[]
     if SR == "SR1" or SR == "SR2" or Analyzer == "HNtypeI_Dilepton":
         filepaths.append(os.getenv("INFILE_MERGED_PATH")  + "/"+Analyzer+"/"+ year + "/"+Analyzer+"_SkimTree_SSNonIso_Fake"+channel+".root"  )
     else:
         filepaths.append(os.getenv("INFILE_MERGED_PATH")  + "/"+Analyzer+"/"+year + "/"+Analyzer+"_SkimTree_SSNonIso_FakeOS.root"  )
-
 
     total=0
     for f in filepaths:
@@ -711,11 +795,35 @@ def GetFakeCountSRMassBin(channel, SR, mass,year,_id,Analyzer):
     if total < 0:
         return 0.0
 
-
     return round(total,4)
 
 
+def GetFakeCountSRMass(year, Analyzer, systName, flavour, SR, mass, _id):
+
+    histname  = GetHistNameSRMass(systName, flavour, SR, mass, _id)
+    PDname    = GetPDName(year, flavour)
+    filepaths = []
+
+    if SR == "SR1" or SR == "SR2":
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunFake__/DATA/" + Analyzer + "_SkimTree_Dilepton_" + PDname + ".root")
+
+    total = 0
+    for f in filepaths:
+        _file = ROOT.TFile(f)
+        if _file:
+            hist = _file.Get(histname)
+            if hist:
+                total += hist.GetBinContent(1)
+        _file.Close()
+
+    if total < 0:
+        return 0.
+
+    return round(total, 4)
+
+
 def GetVariableName(_var, signalregion):
+
     _vartmp = _var
     if signalregion == "SR2":
         _vartmp=_vartmp.replace('jj','J')
@@ -723,7 +831,6 @@ def GetVariableName(_var, signalregion):
         _vartmp=_vartmp.replace('jj','J')
 
     return _vartmp
-    
     
 
 def GetCFCountSRMassBin(channel,SR, mass,year,_id,Analyzer):
@@ -738,8 +845,6 @@ def GetCFCountSRMassBin(channel,SR, mass,year,_id,Analyzer):
     else:
         return 0.
 
-
-
     total=0
     for f in filepaths:
         _file = ROOT.TFile(f)
@@ -752,8 +857,35 @@ def GetCFCountSRMassBin(channel,SR, mass,year,_id,Analyzer):
     if total < 0:
         return 0.0
 
-    # 0.72 got by scaling 2016 value to EXO-17028
+    # 0.72 got by scaling 2016 value to EXO-17-028
     return round(total,4)
+
+
+def GetCFCountSRMass(year, Analyzer, systName, flavour, SR, mass, _id):
+
+    if flavour == "MuMu" or flavour == "EMu":
+        return 0.
+
+    histname  = GetHistNameSRMass(systName, flavour, SR, mass, _id)
+    PDname    = GetPDName(year, flavour)
+    filepaths = []
+
+    if SR == "SR1" or SR == "SR2":
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunCF__/DATA/" + Analyzer + "_SkimTree_Dilepton_" + PDname + ".root")
+
+    total = 0
+    for f in filepaths:
+        _file = ROOT.TFile(f)
+        if _file:
+            hist = _file.Get(histname)
+            if hist:
+                total += hist.GetBinContent(1)
+        _file.Close()
+
+    if total < 0:
+        return 0.
+
+    return round(total, 4)
 
 
 def GetPromptCountSRMassBin(channel,SR, mass,year,_id,Analyzer):
@@ -766,7 +898,6 @@ def GetPromptCountSRMassBin(channel,SR, mass,year,_id,Analyzer):
     else:
         filepaths.append(os.getenv("INFILE_MERGED_PATH") +"/"+Analyzer+"/"+ year + "/"+Analyzer+"_SkimTree_SSNonIso_OSPrompt.root")
 
-
     total=0
     for f in filepaths:
         _file = ROOT.TFile(f)
@@ -778,3 +909,111 @@ def GetPromptCountSRMassBin(channel,SR, mass,year,_id,Analyzer):
 
     return round(total,4)
 
+
+def GetVVCountSRMass(year, Analyzer, systName, flavour, SR, mass, _id):
+
+    histname  = GetHistNameSRMass(systName, flavour, SR, mass, _id)
+    filepaths = []
+
+    if SR == "SR1" or SR == "SR2":
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/RunSyst__/" + Analyzer + "_SkimTree_Dilepton_VV.root")
+
+    total = 0
+    for f in filepaths:
+        _file = ROOT.TFile(f)
+        if _file:
+            hist = _file.Get(histname)
+            if hist:
+                total += hist.GetBinContent(1)
+        _file.Close()
+
+    return round(total, 4)
+
+
+def GetRareSMCountSRMass(year, Analyzer, systName, flavour, SR, mass, _id):
+
+    histname  = GetHistNameSRMass(systName, flavour, SR, mass, _id)
+    filepaths = []
+
+    if SR == "SR1" or SR == "SR2":
+        filepaths.append(os.getenv("INFILE_MERGED_PATH") + "/" + Analyzer + "/" + year + "/" + Analyzer + "_RareSM.root")
+
+    total = 0
+    for f in filepaths:
+        _file = ROOT.TFile(f)
+        if _file:
+            hist = _file.Get(histname)
+            if hist:
+                total += hist.GetBinContent(1)
+        _file.Close()
+
+    return round(total, 4)
+
+
+def GetScale(mass):
+
+    massValue = int(mass)
+
+    scale_ = 1.
+    if massValue <= 150:
+        scale_ = 10.
+    elif massValue <= 450:
+        scale_ = 100.
+    elif massValue <= 850:
+        scale_ = 1000.
+    elif massValue <= 1500:
+        scale_ = 10000.
+    else:
+        scale_ = 100000.
+
+    return scale_
+
+
+def GetLimitsFullCLs(year, flavour, SR, mass, isVBF, _id, quant):
+
+    rValue = 0.
+    isFile = False
+
+    isFile = os.path.isfile("/data6/Users/helee/Limits/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/data/HNtypeI/batch/output/" + quant + "/higgsCombinecard_" + year + "_" + flavour + "_combined_" + SR + "_M" + mass + isVBF + "_" + _id + ".txt_exp0." + quant + ".HybridNew.mH120.quant0." + quant + ".root")
+
+    if isFile:
+
+        _file = ROOT.TFile("/data6/Users/helee/Limits/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/data/HNtypeI/batch/output/" + quant + "/higgsCombinecard_" + year + "_" + flavour + "_combined_" + SR + "_M" + mass + isVBF + "_" + _id + ".txt_exp0." + quant + ".HybridNew.mH120.quant0." + quant + ".root")
+        tree = _file.Get("limit")
+        nEntries = tree.GetEntries()
+
+        if nEntries > 0:
+            tree.GetEntry(0)
+            rValue = tree.limit
+        else:
+            rValue = -1.
+
+    else:
+        rValue = -2.
+
+    return round(rValue, 4)
+
+
+def GetLimitsAsymptotic(year, flavour, SR, mass, isVBF, _id, entry):
+
+    rValue = 0.
+    isFile = False
+
+    isFile = os.path.isfile("/data6/Users/helee/Limits/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/data/HNtypeI/batch/output/Asymptotic/higgsCombinecard_" + year + "_" + flavour + "_combined_" + SR + "_M" + mass + isVBF + "_" + _id + ".txt.AsymptoticLimits.mH120.root")
+
+    if isFile:
+
+        _file = ROOT.TFile("/data6/Users/helee/Limits/CMSSW_10_2_13/src/HiggsAnalysis/CombinedLimit/data/HNtypeI/batch/output/Asymptotic/higgsCombinecard_" + year + "_" + flavour + "_combined_" + SR + "_M" + mass + isVBF + "_" + _id + ".txt.AsymptoticLimits.mH120.root")
+        tree = _file.Get("limit")
+        nEntries = tree.GetEntries()
+
+        if nEntries == 5:
+            tree.GetEntry(entry)
+            rValue = tree.limit
+        else:
+            rValue = -1.
+
+    else:
+        rValue = -2.
+
+    return round(rValue, 4)
